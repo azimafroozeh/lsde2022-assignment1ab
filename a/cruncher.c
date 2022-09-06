@@ -45,12 +45,12 @@ int result_comparator(const void *v1, const void *v2) {
         return 0;
 }
 
-unsigned char get_score(Person *person, unsigned short areltd[]) {
+signed char get_score(Person *person, unsigned short areltd[]) {
 	long interest_offset;
 	unsigned short interest;
-	unsigned char score = 0;
-	for (interest_offset = person->interests_first; 
-		interest_offset < person->interests_first + person->interest_n; 
+	signed char score = 0;
+	for (interest_offset = person->interests_first;
+		interest_offset < person->interests_first + person->interest_n;
 		interest_offset++) {
 
 		interest = interest_map[interest_offset];
@@ -65,13 +65,13 @@ unsigned char get_score(Person *person, unsigned short areltd[]) {
 	return score;
 }
 
-char likes_artist(Person *person, unsigned short artist) {
+signed char likes_artist(Person *person, unsigned short artist) {
 	long interest_offset;
 	unsigned short interest;
 	unsigned short likesartist = 0;
 
-	for (interest_offset = person->interests_first; 
-		interest_offset < person->interests_first + person->interest_n; 
+	for (interest_offset = person->interests_first;
+		interest_offset < person->interests_first + person->interest_n;
 		interest_offset++) {
 
 		interest = interest_map[interest_offset];
@@ -88,7 +88,7 @@ void query(unsigned short qid, unsigned short artist, unsigned short areltd[], u
 	unsigned long knows_offset, knows_offset2;
 
 	Person *person, *knows;
-	char score, *score_cache = (char*) malloc(person_length/sizeof(Person));
+	signed char score, *score_cache = (signed char*) malloc(person_length/sizeof(Person));
 
 	unsigned int result_length = 0, result_idx, result_set_size = 1000;
 	Result* results = malloc(result_set_size * sizeof (Result));
@@ -117,20 +117,20 @@ void query(unsigned short qid, unsigned short artist, unsigned short areltd[], u
 			printf("pass2: %.2f%%\n", 100 * (person_offset * 1.0/(person_length/sizeof(Person))));
 		}
 		// filter by birthday
-		if (person->birthday < bdstart || person->birthday > bdend) continue; 
+		if (person->birthday < bdstart || person->birthday > bdend) continue;
 
 		// but person must like some of these other guys
 		score = score_cache[person_offset];
 		if (score < 1) continue;
 
-		// check if friend lives in same city and likes artist 
-		for (knows_offset = person->knows_first; 
-			knows_offset < person->knows_first + person->knows_n; 
+		// check if friend lives in same city and likes artist
+		for (knows_offset = person->knows_first;
+			knows_offset < person->knows_first + person->knows_n;
 			knows_offset++) {
 
 			unsigned int friend_offset = knows_map[knows_offset];
 			knows = &person_map[friend_offset];
-			if (person->location != knows->location) continue; 
+			if (person->location != knows->location) continue;
 
 			// friend must already like the artist
 			if (score_cache[friend_offset] != -1) continue;
@@ -164,7 +164,7 @@ void query(unsigned short qid, unsigned short artist, unsigned short areltd[], u
 			knows_offset2++)
 		{
 			if (knows_map[knows_offset2] == results[result_idx].person_offset) {
-				fprintf(outfile, "%d|%d|%lu|%lu\n", qid, results[result_idx].score, 
+				fprintf(outfile, "%d|%d|%lu|%lu\n", qid, results[result_idx].score,
 					results[result_idx].person_id, results[result_idx].knows_id);
 				break;
 			}
@@ -184,7 +184,7 @@ void query_line_handler(unsigned char nfields, char** tokens) {
 	q_relartists[2] = atoi(tokens[QUERY_FIELD_A4]);
 	q_bdaystart     = birthday_to_short(tokens[QUERY_FIELD_BS]);
 	q_bdayend       = birthday_to_short(tokens[QUERY_FIELD_BE]);
-	
+
 	query(q_id, q_artist, q_relartists, q_bdaystart, q_bdayend);
 }
 

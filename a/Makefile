@@ -5,7 +5,7 @@ mutilate: mutilate.c utils.h
 	gcc -I. -O3 -o mutilate mutilate.c
 
 cruncher: cruncher.c utils.h
-	gcc -I. -O3 -o cruncher cruncher.c 
+	gcc -I. -g -o cruncher cruncher.c
 
 loader: loader.c utils.h
 	gcc -I. -O3 -o loader loader.c 
